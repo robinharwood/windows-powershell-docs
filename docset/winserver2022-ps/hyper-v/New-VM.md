@@ -20,7 +20,7 @@ Creates a new virtual machine.
 
 ```
 New-VM [[-Name] <String>] [[-MemoryStartupBytes] <Int64>] [-BootDevice <BootDevice>] [-NoVHD]
- [-SwitchName <String>] [-Path <String>] [-Version <Version>] [-Prerelease] [-Experimental]
+ [-SwitchName <String>] [-Path <String>] [-Version <Version>] [-Prerelease]
  [[-Generation] <Int16>] [-Force] [-AsJob] [-CimSession <CimSession[]>] [-ComputerName <String[]>]
  [-Credential <PSCredential[]>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
@@ -30,7 +30,7 @@ New-VM [[-Name] <String>] [[-MemoryStartupBytes] <Int64>] [-BootDevice <BootDevi
 ```
 New-VM [[-Name] <String>] [[-MemoryStartupBytes] <Int64>] [-BootDevice <BootDevice>] [-SwitchName <String>]
  -NewVHDPath <String> -NewVHDSizeBytes <UInt64> [-Path <String>] [-Version <Version>] [-Prerelease]
- [-Experimental] [[-Generation] <Int16>] [-Force] [-AsJob] [-CimSession <CimSession[]>]
+ [[-Generation] <Int16>] [-Force] [-AsJob] [-CimSession <CimSession[]>]
  [-ComputerName <String[]>] [-Credential <PSCredential[]>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
@@ -38,7 +38,7 @@ New-VM [[-Name] <String>] [[-MemoryStartupBytes] <Int64>] [-BootDevice <BootDevi
 
 ```
 New-VM [[-Name] <String>] [[-MemoryStartupBytes] <Int64>] [-BootDevice <BootDevice>] [-SwitchName <String>]
- -VHDPath <String> [-Path <String>] [-Version <Version>] [-Prerelease] [-Experimental] [[-Generation] <Int16>]
+ -VHDPath <String> [-Path <String>] [-Version <Version>] [-Prerelease] [[-Generation] <Int16>]
  [-Force] [-AsJob] [-CimSession <CimSession[]>] [-ComputerName <String[]>] [-Credential <PSCredential[]>]
  [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
@@ -147,7 +147,7 @@ Accept wildcard characters: False
 ### -CimSession
 
 Runs the cmdlet in a remote session or on a remote computer.
-Enter a computer name or a session object, such as the output of a [New-CimSession](/powershell/module/cimcmdlets/new-cimsession) or [Get-CimSession](https://go.microsoft.com/fwlink/p/?LinkId=227966) cmdlet.
+Enter a computer name or a session object, such as the output of a [New-CimSession](https://docs.microsoft.com/powershell/module/cimcmdlets/new-cimsession) or [Get-CimSession](https://go.microsoft.com/fwlink/p/?LinkId=227966) cmdlet.
 The default is the current session on the local computer.
 
 ```yaml
@@ -204,20 +204,6 @@ The default is the current user.
 
 ```yaml
 Type: PSCredential[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Experimental
-
-```yaml
-Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
