@@ -4,7 +4,7 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/07/2026
+ms.date: 09/09/2026
 PlatyPS schema version: 2024-05-01
 title: Invoke-ADLicense
 ---
@@ -47,13 +47,15 @@ Invoke-ADLicense [-AsJob] [<CommonParameters>]
 The `Invoke-ADLicense` cmdlet performs Active Directory-based activation and deletes Active
 Directory activation objects. Online activation calls the software licensing service to create an
 activation object. Forest activation deposits an offline activation confirmation. The deletion
-operation accepts either the distinguished name or the relative name of an activation object.
+operation accepts an activation object's distinguished or relative name.
 
-The cmdlet returns structured objects for completed operations and caught failures. It returns no
-object when the software licensing service query returns no instance or when you don't select an
+The cmdlet returns structured objects when it completes operations or catches failures. It returns
+no object when the software licensing service query returns no instance or when you don't select an
 operation.
 
-The applicable Windows update KB number for this cmdlet is pending confirmation.
+> [!NOTE]
+> `Invoke-ADLicense` is available in [Windows Server vNext Preview Build 29651](https://techcommunity.microsoft.com/discussions/windowsserverinsiders/announcing-windows-server-vnext-preview-build-29651/4549702)
+> and the [2026-09 security update for Windows 11 (KB5124008)](https://support.microsoft.com/help/5124008).
 
 ## EXAMPLES
 
@@ -61,8 +63,8 @@ The applicable Windows update KB number for this cmdlet is pending confirmation.
 
 > [!CAUTION]
 > This example uses a fictitious product key, confirmation ID, and activation object name. The
-> command changes Active Directory-based activation state. Replace the values only in an authorized
-> test environment after you verify the intended licensing operation.
+> command changes Active Directory-based activation state. After you verify the intended licensing
+> operation, replace the values only in an authorized test environment.
 
 ```powershell
 $activationParameters = @{
@@ -76,12 +78,12 @@ Invoke-ADLicense @activationParameters
 ```
 
 This example requests forest activation by depositing a fictitious offline activation confirmation.
-It doesn't represent an executed activation or actual command output.
+It doesn't represent an actual activation or include command output.
 
 ### Example 2: Delete a fictitious activation object by relative name
 
 > [!CAUTION]
-> Deleting an activation object is immediate and the cmdlet doesn't prompt for confirmation. The
+> The cmdlet immediately deletes an activation object and doesn't prompt for confirmation. The
 > object name in this example is fictitious. Verify the target object and your recovery plan before
 > you run a deletion command in an authorized environment.
 
@@ -91,15 +93,15 @@ Invoke-ADLicense -DeleteActivationObjects 'Fabrikam-Docs-Obsolete-Activation-Obj
 
 This example requests deletion by relative name. The cmdlet resolves a relative name under the
 `CN=Activation Objects,CN=Microsoft SPP` container in the configuration naming context. It doesn't
-represent an executed deletion or actual command output.
+represent an actual deletion or include command output.
 
 ## PARAMETERS
 
 ### -ActivateForest
 
 Requests forest activation by depositing an offline activation confirmation through the software
-licensing service. **ProductKey** and **ConfirmationID** are validated at runtime and must have
-values when you use this parameter.
+licensing service. The cmdlet validates **ProductKey** and **ConfirmationID** at runtime and
+requires values for both parameters.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -121,7 +123,7 @@ HelpMessage: ''
 ### -ActivateOnline
 
 Requests online Active Directory-based activation through the software licensing service. The
-**ProductKey** parameter is validated at runtime and must have a value when you use this parameter.
+cmdlet validates **ProductKey** at runtime and requires a value for online activation.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -194,8 +196,8 @@ HelpMessage: ''
 ### -ConfirmationID
 
 Specifies the offline activation confirmation ID. The function declares this parameter for both
-activation parameter sets, but uses it only with **ActivateForest**. The value is validated at
-runtime and is required for forest activation. The **ActivateOnline** operation ignores this value.
+activation parameter sets but uses it only with **ActivateForest**. It validates the value at
+runtime and requires it for forest activation. The **ActivateOnline** operation ignores this value.
 
 ```yaml
 Type: System.String
@@ -289,48 +291,49 @@ properties:
 
 - **Success** is `$true`.
 - **Operation** is `ActivateOnline` or `ActivateForest`.
-- **ProductKey** is the value supplied to **ProductKey**.
-- **ActivationObjectName** is the value supplied to **ActivationObjectName**, or an empty string
-  when omitted.
+- **ProductKey** is the value that you supply to **ProductKey**.
+- **ActivationObjectName** is the value that you supply to **ActivationObjectName**, or an empty
+  string when you omit **ActivationObjectName**.
 
 For a successful deletion, the cmdlet returns an object with these properties:
 
 - **Success** is `$true`.
 - **Operation** is `DeleteActivationObject`.
-- **ActivationObject** is the value supplied to **DeleteActivationObjects**.
+- **ActivationObject** is the value that you supply to **DeleteActivationObjects**.
 
-For a caught failure, the cmdlet returns an object with these properties:
+When the cmdlet catches a failure, it returns an object with these properties:
 
 - **Success** is `$false`.
-- **ErrorCode** is the CIM `error_Code` value formatted as an eight-digit hexadecimal string with a
-  `0x` prefix, or `$null` when CIM error data doesn't provide a code.
-- **ErrorMessage** is the CIM `error_WindowsErrorMessage` value when available. Otherwise, it is the
-  exception message or the string representation of the caught error.
+- **ErrorCode** is the Common Information Model (CIM) `error_Code` value. The cmdlet formats the
+  value as an eight-digit hexadecimal string with a `0x` prefix. If CIM error data doesn't provide
+  a code, **ErrorCode** is `$null`.
+- **ErrorMessage** is the CIM `error_WindowsErrorMessage` value when CIM provides one. Otherwise,
+  it's the exception message or the string representation of the error that the cmdlet catches.
 
-The cmdlet returns no object when the CIM query returns no `SoftwareLicensingService` instance or
-when no operation is selected.
+The cmdlet returns no object when the CIM query returns no **SoftwareLicensingService** instance or
+when you don't select an operation.
 
 ### System.Management.Automation.Job
 
-When you use **AsJob**, the implicit-remoting wrapper returns a job object instead of returning the
-operation result directly. Use `Receive-Job` to receive the underlying structured result, or no
-output when the underlying command returns no object.
+When you use **AsJob**, the implicit-remoting wrapper returns a job object rather than the operation
+result. Use `Receive-Job` to receive the underlying structured result. If the underlying command
+returns no object, `Receive-Job` produces no output.
 
 ## NOTES
 
-Run this cmdlet with the permissions required to invoke software licensing service methods and to
-modify Active Directory activation objects.
+To invoke software licensing service methods and modify Active Directory activation objects, run
+this cmdlet with the necessary permissions.
 
 The `Invoke-ADLicense` function doesn't implement `SupportsShouldProcess`. For deletion, it calls
-`Remove-ADObject` with confirmation disabled when the ActiveDirectory module is available, or calls
-the ADSI `DeleteTree()` method otherwise.
+`Remove-ADObject` without confirmation when the `ActiveDirectory` module is available. Otherwise,
+it calls the ADSI `DeleteTree()` method.
 
-The **ProductKey**, **ConfirmationID**, and activation switches aren't marked as mandatory in the
-function metadata. The function performs runtime validation: both activation operations require a
+The function metadata doesn't mark the **ProductKey**, **ConfirmationID**, and activation switches
+as mandatory. The function performs runtime validation: both activation operations require a
 product key, and forest activation also requires a confirmation ID.
 
 The generated implicit-remoting wrapper adds **AsJob** to every parameter set. This wrapper
-parameter is intentionally retained even though it isn't present in the module function source.
+intentionally retains the parameter even though the module function source doesn't include it.
 
 ## RELATED LINKS
 

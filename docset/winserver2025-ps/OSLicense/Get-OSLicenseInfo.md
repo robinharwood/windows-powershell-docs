@@ -4,7 +4,7 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/07/2026
+ms.date: 09/09/2026
 PlatyPS schema version: 2024-05-01
 title: Get-OSLicenseInfo
 ---
@@ -48,15 +48,17 @@ Get-OSLicenseInfo [-TokenBasedCertificates] [-AsJob] [<CommonParameters>]
 
 ## DESCRIPTION
 
-The `Get-OSLicenseInfo` cmdlet queries the local Software Licensing CIM classes and returns
-structured licensing information. Without parameters, the cmdlet returns the first Windows
+The `Get-OSLicenseInfo` cmdlet queries local software licensing Common Information Model
+(CIM) classes to return structured licensing information.
+Without parameters, the cmdlet returns the first Windows
 operating system product that has a partial product key and isn't an add-on license.
 
 Use **ActivationID** to query a specific product, **All** to query every product that has an
 application ID and name, or the token parameters to query token-based licenses or certificates.
 
-The cmdlet is available through an applicable Windows update. The KB number for that update is
-pending confirmation.
+> [!NOTE]
+> `Get-OSLicenseInfo` is available in [Windows Server vNext Preview Build 29651](https://techcommunity.microsoft.com/discussions/windowsserverinsiders/announcing-windows-server-vnext-preview-build-29651/4549702)
+> and the [2026-09 security update for Windows 11 (KB5124008)](https://support.microsoft.com/help/5124008).
 
 ## EXAMPLES
 
@@ -68,8 +70,8 @@ Get-OSLicenseInfo |
         GracePeriodRemaining, EvaluationEndDate
 ```
 
-This example gets the primary Windows operating system license and selects properties useful for
-checking its activation state and expiration.
+This example gets the primary Windows operating system license and selects properties that show its
+activation state and expiration.
 
 ### Example 2: Review token-based licenses
 
@@ -79,15 +81,15 @@ Get-OSLicenseInfo -TokenBasedLicenses |
     Select-Object ILID, ILvID, AuthorizationStatus, Description, ExpirationDate
 ```
 
-This example lists token-based licenses in expiration-date order and selects their identifying and
+This example sorts token-based licenses by expiration date and selects their identifying and
 status properties.
 
 ## PARAMETERS
 
 ### -ActivationID
 
-Specifies the activation ID of the software licensing product to return. The cmdlet performs an
-exact match against the **ID** property of the `SoftwareLicensingProduct` CIM instance.
+Specifies the activation ID of the software licensing product that the cmdlet returns. The cmdlet
+performs an exact match against the **ID** property of the **SoftwareLicensingProduct** CIM instance.
 
 ```yaml
 Type: System.String
@@ -108,9 +110,8 @@ HelpMessage: ''
 
 ### -All
 
-Returns every software licensing product whose **ApplicationID** and **Name** properties are
-populated. The results can include products other than the primary Windows operating system
-license.
+Returns every software licensing product whose **ApplicationID** and **Name** properties contain
+values. The results can include products other than the primary Windows operating system license.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -132,7 +133,7 @@ HelpMessage: ''
 ### -AsJob
 
 Runs the command as a background job when you invoke it through an implicit-remoting wrapper. This
-parameter is supplied by the wrapper and isn't declared by the local `OSLicense` module function.
+wrapper supplies the parameter, and the local `OSLicense` module function doesn't declare it.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -154,8 +155,7 @@ HelpMessage: ''
 ### -TokenBasedCertificates
 
 Returns token-based activation certificate information from the local software licensing service,
-including the issued certificate thumbprint list, grant number, ILID, ILvID, and additional
-information.
+including the issued certificate thumbprint list, grant number, ILID, and ILvID.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -206,13 +206,13 @@ This cmdlet doesn't accept pipeline input.
 
 ### System.Management.Automation.PSCustomObject
 
-For the default, **All**, and **ActivationID** parameter sets, the cmdlet returns objects that
+For the default, `All`, and `ActivationID` parameter sets, the cmdlet returns objects that
 combine product and licensing-service data. Notable properties include **Name**, **ActivationID**,
 **ApplicationID**, **PartialProductKey**, **LicenseStatus**, **LicenseStatusReason**,
 **GracePeriodRemaining**, **EvaluationEndDate**, **OfflineInstallationId**, rearm counts,
-**Version**, **ClientMachineID**, and **IsKeyManagementServiceMachine**. KMS properties such as
-**KeyManagementServiceMachine**, **KeyManagementServicePort**, and activation and renewal intervals
-are present only when KMS configuration or discovery data exists.
+**Version**, **ClientMachineID**, and **IsKeyManagementServiceMachine**. Objects include Key Management
+Service (KMS) properties such as **KeyManagementServiceMachine**, **KeyManagementServicePort**, and
+activation and renewal intervals only when KMS configuration or discovery data exists.
 
 For **TokenBasedLicenses**, each object has **ILID**, **ILvID**, **AuthorizationStatus**,
 **Description**, and **ExpirationDate** properties. For **TokenBasedCertificates**, the object has
@@ -231,8 +231,8 @@ The cmdlet returns no object when it finds no matching licensing data or when it
 It returns unset date values as `$null`. It also converts licensing sentinel values to contextual
 strings such as `Unlimited`, `No Limit`, `N/A`, or `Not Set` where applicable.
 
-The **LicenseStatus** value is a localized status string. **LicenseStatusReason** is formatted as a
-hexadecimal error code when the source value isn't `$null`.
+The **LicenseStatus** value is a localized status string. The cmdlet formats **LicenseStatusReason** as
+a hexadecimal error code when the source value isn't `$null`.
 
 ## RELATED LINKS
 

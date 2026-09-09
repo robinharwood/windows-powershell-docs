@@ -4,7 +4,7 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/07/2026
+ms.date: 09/09/2026
 PlatyPS schema version: 2024-05-01
 title: Set-KmsLicenseInfo
 ---
@@ -12,7 +12,7 @@ title: Set-KmsLicenseInfo
 # Set-KmsLicenseInfo
 
 ## SYNOPSIS
-Sets Key Management Services (KMS) license configuration.
+Sets the Key Management Services (KMS) license configuration.
 
 ## SYNTAX
 
@@ -32,10 +32,12 @@ the local computer. Specify only the settings that you want to change. Settings 
 parameters remain unchanged.
 
 The cmdlet returns a structured object that indicates whether the operation succeeded. When an
-operation fails, the object includes the available Windows error code and error message instead of
-writing an error to the console.
+operation fails, the cmdlet includes the available Windows error code and error message in the
+object instead of writing an error to the console.
 
-The applicable Windows update KB number that makes this cmdlet available is pending confirmation.
+> [!NOTE]
+> `Set-KmsLicenseInfo` is available in [Windows Server vNext Preview Build 29651](https://techcommunity.microsoft.com/discussions/windowsserverinsiders/announcing-windows-server-vnext-preview-build-29651/4549702)
+> and the [2026-09 security update for Windows 11 (KB5124008)](https://support.microsoft.com/help/5124008).
 
 ## EXAMPLES
 
@@ -49,8 +51,8 @@ local computer's licensing configuration, so confirm the host name and port befo
 Set-KmsLicenseInfo -ServerName 'kms01.example.com' -Port 1688
 ```
 
-The returned object has a **Success** property that indicates whether the licensing service applied
-the configuration.
+The command returns an object with a **Success** property that indicates whether the licensing service
+applied the configuration.
 
 ### Example 2: Configure KMS host behavior
 
@@ -106,7 +108,7 @@ HelpMessage: ''
 ### -AsJob
 
 Runs the command as a background job. The command returns a job object that you can use with the
-PowerShell job cmdlets. This parameter is provided by the implicit remoting proxy.
+PowerShell job cmdlets. The implicit remoting proxy provides this parameter.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -128,8 +130,8 @@ HelpMessage: ''
 ### -DnsPublishing
 
 Specifies whether the KMS host publishes its service resource (SRV) record in Domain Name System
-(DNS). Specify `$true` to enable publishing or `$false` to disable it. DNS publishing is enabled by
-default for a KMS host. If you omit this parameter, the current setting remains unchanged.
+(DNS). Specify `$true` to enable publishing or `$false` to disable it. By default, a KMS host
+publishes its SRV record in DNS. If you omit this parameter, the current setting remains unchanged.
 
 ```yaml
 Type: System.Boolean
@@ -151,7 +153,7 @@ HelpMessage: ''
 ### -Domain
 
 Specifies the DNS domain in which the KMS client searches for KMS SRV records. This setting has no
-effect when a specific KMS host is configured with **ServerName**. If you omit this parameter, the
+effect when you configure a specific KMS host with **ServerName**. If you omit this parameter, the
 current setting remains unchanged.
 
 ```yaml
@@ -174,8 +176,8 @@ HelpMessage: ''
 ### -HostCaching
 
 Specifies whether a KMS client caches a discovered KMS host. Specify `$true` to enable caching or
-`$false` to disable it. Host caching is enabled by default. If you omit this parameter, the current
-setting remains unchanged.
+`$false` to disable it. The KMS client enables host caching by default. If you omit this parameter,
+the current setting remains unchanged.
 
 ```yaml
 Type: System.Boolean
@@ -220,10 +222,10 @@ HelpMessage: ''
 
 ### -Port
 
-Specifies the TCP port that the KMS client uses to contact the KMS host specified by **ServerName**.
-The KMS default port is `1688`. The cmdlet doesn't define a range-validation attribute for this
-parameter; the licensing service validates the value. If you omit this parameter, the current
-setting remains unchanged.
+Specifies the TCP port that the KMS client uses to contact the KMS host that **ServerName**
+specifies. The KMS default port is `1688`. The cmdlet doesn't define a range-validation attribute
+for this parameter; the licensing service validates the value. If you omit this parameter, the
+current setting remains unchanged.
 
 ```yaml
 Type: System.Int32
@@ -345,8 +347,8 @@ All configuration parameters are optional, and the cmdlet changes only parameter
 specify. The integer parameters don't have `ValidateRange` attributes. **Priority** is the only
 parameter with explicit value validation and accepts `Normal` or `Low`.
 
-The source function doesn't define an **AsJob** parameter. **AsJob** is retained here because the
-published command surface uses an implicit remoting proxy that adds the parameter.
+The source function doesn't define an **AsJob** parameter. The published command surface retains
+**AsJob** because its implicit remoting proxy adds the parameter.
 
 ## RELATED LINKS
 

@@ -4,7 +4,7 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/07/2026
+ms.date: 09/09/2026
 PlatyPS schema version: 2024-05-01
 title: Set-OSLicenseInfo
 ---
@@ -24,15 +24,17 @@ Set-OSLicenseInfo [-ActivationType] <Int32> [-AsJob] [<CommonParameters>]
 
 ## DESCRIPTION
 
-The `Set-OSLicenseInfo` cmdlet changes the volume activation type used by the Windows software
-licensing service on the local computer. You can use the default activation behavior or require
+The `Set-OSLicenseInfo` cmdlet changes the volume activation type that the Windows software
+licensing service uses on the local computer. Use the default activation behavior or require
 Active Directory-based, Key Management Services (KMS), or token-based activation.
 
-The cmdlet returns a structured object that indicates whether the operation succeeded. A runtime
-CIM failure is returned in the object with the available Windows error code and error message; the
-cmdlet doesn't write the failure to the error stream.
+The cmdlet returns a structured object that indicates whether the operation succeeded. If a runtime
+Common Information Model (CIM) failure occurs, the object includes the available Windows error code
+and error message. The cmdlet doesn't write the failure to the error stream.
 
-The applicable Windows update KB number that makes this cmdlet available is pending confirmation.
+> [!NOTE]
+> `Set-OSLicenseInfo` is available in [Windows Server vNext Preview Build 29651](https://techcommunity.microsoft.com/discussions/windowsserverinsiders/announcing-windows-server-vnext-preview-build-29651/4549702)
+> and the [2026-09 security update for Windows 11 (KB5124008)](https://support.microsoft.com/help/5124008).
 
 ## EXAMPLES
 
@@ -64,15 +66,15 @@ Set-OSLicenseInfo -ActivationType 0
 
 ### -ActivationType
 
-Specifies the volume activation type. The supported values are:
+Specifies the volume activation type. The parameter supports these values:
 
 - `0` - Use the default activation type.
 - `1` - Use Active Directory-based activation.
 - `2` - Use KMS activation.
 - `3` - Use token-based activation.
 
-This parameter is required. PowerShell rejects values outside the range `0` through `3` before the
-cmdlet changes the licensing configuration.
+You must specify this parameter. PowerShell rejects values outside the range `0` through `3`
+before the cmdlet changes the licensing configuration.
 
 ```yaml
 Type: System.Int32
@@ -98,7 +100,7 @@ HelpMessage: ''
 ### -AsJob
 
 Runs the command as a background job when you invoke it through an implicit-remoting wrapper. This
-parameter is supplied by the wrapper and isn't declared by the local `OSLicense` module function.
+wrapper supplies the parameter, and the local `OSLicense` module function doesn't declare it.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -127,24 +129,24 @@ This cmdlet doesn't accept pipeline input.
 
 ### System.Management.Automation.PSCustomObject
 
-When the licensing service applies the activation type, the cmdlet returns an object with
-**Success** set to `$true` and **ActivationType** set to the requested value.
+When the licensing service applies the activation type, the cmdlet returns an object. Its
+**Success** property is `$true`, and its **ActivationType** property contains the requested value.
 
-When a runtime CIM operation fails, the cmdlet returns an object with **Success** set to `$false`,
-**ErrorCode** set to the available Windows HRESULT formatted as a hexadecimal value, and
-**ErrorMessage** set to the available Windows error message. The cmdlet returns no object if it
-can't find the software licensing service.
+When a runtime CIM operation fails, the cmdlet returns an object. The **Success** property is
+`$false`, the **ErrorCode** property contains the available Windows HRESULT in hexadecimal format,
+and the **ErrorMessage** property contains the available Windows error message. The cmdlet returns
+no object if it can't find the software licensing service.
 
 ### System.Management.Automation.Job
 
-When you use **AsJob** through an implicit-remoting wrapper, the cmdlet returns a job object. Use
-`Receive-Job` to retrieve the structured result from the completed job.
+When you specify the **AsJob** parameter through an implicit-remoting wrapper, the cmdlet returns a
+job object. Use `Receive-Job` to retrieve the structured result from the completed job.
 
 ## NOTES
 
 Run this cmdlet from an elevated PowerShell session. Parameter-binding and validation failures,
 including an **ActivationType** value outside the supported range, occur before the cmdlet invokes
-the licensing service and aren't returned as structured result objects.
+the licensing service. The cmdlet doesn't return these failures as structured result objects.
 
 ## RELATED LINKS
 

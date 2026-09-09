@@ -4,7 +4,7 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/07/2026
+ms.date: 09/09/2026
 PlatyPS schema version: 2024-05-01
 title: Set-SubscriptionLicenseInfo
 ---
@@ -12,7 +12,7 @@ title: Set-SubscriptionLicenseInfo
 # Set-SubscriptionLicenseInfo
 
 ## SYNOPSIS
-Sets subscription license configuration.
+Sets the subscription license configuration.
 
 ## SYNTAX
 
@@ -27,8 +27,11 @@ Set-SubscriptionLicenseInfo [-Enabled] <Boolean> [-AsJob] [<CommonParameters>]
 The `Set-SubscriptionLicenseInfo` cmdlet enables or disables Windows subscription licensing.
 Set **Enabled** to `$true` to enable subscription licensing or `$false` to disable it.
 
-This cmdlet is available on systems that include the OSLicense module. The applicable Windows
-update KB number is pending confirmation.
+This cmdlet is available on systems that include the OSLicense module.
+
+> [!NOTE]
+> `Set-SubscriptionLicenseInfo` is available in [Windows Server vNext Preview Build 29651](https://techcommunity.microsoft.com/discussions/windowsserverinsiders/announcing-windows-server-vnext-preview-build-29651/4549702)
+> and the [2026-09 security update for Windows 11 (KB5124008)](https://support.microsoft.com/help/5124008).
 
 ## EXAMPLES
 
@@ -60,8 +63,8 @@ Set-SubscriptionLicenseInfo -Enabled $false
 
 ### -AsJob
 
-Runs the command as a background job. This parameter is added by the implicit-remoting wrapper and
-isn't declared by the underlying `Set-SubscriptionLicenseInfo` function.
+Runs the command as a background job. The implicit-remoting wrapper adds this parameter, but the
+underlying `Set-SubscriptionLicenseInfo` function doesn't declare it.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -82,7 +85,7 @@ HelpMessage: ''
 
 ### -Enabled
 
-Specifies whether to enable or disable Windows subscription licensing. Set this parameter to `$true`
+Enables or disables Windows subscription licensing. Set this parameter to `$true`
 to enable subscription licensing or `$false` to disable it.
 
 ```yaml
@@ -128,14 +131,14 @@ When you use **AsJob** through an implicit-remoting wrapper, the cmdlet returns 
 Run this cmdlet from an elevated PowerShell session because it changes system licensing
 configuration.
 
-The cmdlet reads the subscription type from the `SoftwareLicensingService` CIM instance. The current
+The cmdlet reads the subscription type from the **SoftwareLicensingService** CIM instance. The current
 implementation supports subscription type `0`. It invokes `ClipRenew.exe` with either the
 `enablesubscription` or `disablesubscription` operation and suppresses the native command's output.
 An unsupported subscription type, a CIM error, a missing tool, or a nonzero native exit code causes
 the cmdlet to return `$null`.
 
-The source function doesn't define **AsJob**. This parameter is retained because the
-implicit-remoting wrapper adds it to the command surface.
+The implicit-remoting wrapper adds the **AsJob** parameter to the command surface even though the
+source function doesn't define it.
 
 ## RELATED LINKS
 

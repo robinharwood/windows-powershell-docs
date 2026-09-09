@@ -4,7 +4,7 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/07/2026
+ms.date: 09/09/2026
 PlatyPS schema version: 2024-05-01
 title: Invoke-SubscriptionLicense
 ---
@@ -38,7 +38,7 @@ Invoke-SubscriptionLicense [-Acquire] [-AsJob] [<CommonParameters>]
 
 `Invoke-SubscriptionLicense` invokes a Windows subscription licensing operation on the local
 computer. Select **Remove**, **Refresh**, or **Acquire**. The function reads the
-**SubscriptionType** property from the `SoftwareLicensingService` CIM class and uses the matching
+**SubscriptionType** property from the **SoftwareLicensingService** CIM class and uses the matching
 entry in its internal tool map.
 
 For subscription type `0`, the source maps **Remove** to `removesubscription` and **Refresh** to
@@ -47,18 +47,19 @@ current **Acquire** path starts `%SystemRoot%\System32\ClipRenew.exe` with only 
 doesn't establish an acquisition command for this configuration.
 
 The cmdlet discards native tool output and catches all errors. It returns a success object only
-when the native tool exits with code `0`. It returns no object when no operation is selected or
-when configuration lookup, tool startup, or the requested operation fails.
+if the native tool exits with code `0`. It returns no object if you don't select an operation or
+if configuration lookup, tool startup, or the requested operation fails.
 
-The cmdlet is available through an applicable Windows update. The KB number for that update is
-pending confirmation.
+> [!NOTE]
+> `Invoke-SubscriptionLicense` is available in [Windows Server vNext Preview Build 29651](https://techcommunity.microsoft.com/discussions/windowsserverinsiders/announcing-windows-server-vnext-preview-build-29651/4549702)
+> and the [2026-09 security update for Windows 11 (KB5124008)](https://support.microsoft.com/help/5124008).
 
 ## EXAMPLES
 
 ### Example 1: Request a subscription license refresh
 
-This example shows a refresh request and checks for the `$null` result that the cmdlet uses for
-failures. Automation shouldn't treat the absence of an error record as proof of success.
+This example requests a refresh and checks whether the cmdlet returns `$null` for a failure. Don't
+treat the absence of an error record as proof of success.
 
 ```powershell
 $result = Invoke-SubscriptionLicense -Refresh
@@ -71,12 +72,11 @@ if ($null -eq $result) {
 $result | Select-Object Success, Operation
 ```
 
-A non-null result has **Success** set to `$true` and **Operation** set to
-`RefreshSubscription`.
+For a non-null result, **Success** is `$true`, and **Operation** is `RefreshSubscription`.
 
 ### Example 2: Remove a subscription license
 
-The following command shows the syntax for removing the subscription license from the device.
+The following command removes the subscription license from the device.
 
 > [!CAUTION]
 > The function doesn't implement `SupportsShouldProcess`, so `-WhatIf` and `-Confirm` aren't
@@ -115,7 +115,7 @@ HelpMessage: ''
 ### -AsJob
 
 Runs the command as a background job when you invoke it through an implicit-remoting wrapper. This
-parameter is supplied by the wrapper and isn't declared by the local `OSLicense` module function.
+wrapper supplies this parameter, but the local `OSLicense` module function doesn't declare it.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -210,9 +210,9 @@ The current source defines a tool mapping only for subscription type `0`. An uns
 **SubscriptionType** value causes the configuration lookup to fail, and the cmdlet catches that
 failure and returns no object.
 
-The native tool's standard output is discarded. The cmdlet uses only the process exit code to
-decide whether to return a success object. It doesn't return an error object or write an error
-record when an operation fails.
+The cmdlet discards the native tool's standard output and uses only the process exit code to decide
+whether to return a success object. It doesn't return an error object or write an error record when
+an operation fails.
 
 The current **Acquire** mapping is `$null`. Until the implementation defines an acquisition
 command, don't interpret an `AcquireSubscription` success object as evidence that the source

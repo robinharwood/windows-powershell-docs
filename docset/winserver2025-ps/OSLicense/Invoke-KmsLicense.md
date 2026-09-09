@@ -4,7 +4,7 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/07/2026
+ms.date: 09/09/2026
 PlatyPS schema version: 2024-05-01
 title: Invoke-KmsLicense
 ---
@@ -44,15 +44,16 @@ Invoke-KmsLicense [-ClearListeningPort] [-AsJob] [<CommonParameters>]
 
 The `Invoke-KmsLicense` cmdlet clears a manually configured KMS client or KMS host setting from the
 local software licensing service. It can clear the KMS client host name, client port, DNS lookup
-domain, or KMS host listening port. Each clearing operation uses a separate parameter set, so you
-can select only one operation per invocation.
+domain, or KMS host listening port. Each clearing operation uses a separate parameter set, so
+select only one operation per invocation.
 
 The cmdlet returns a structured result object for successful operations and CIM errors. It doesn't
 write operation status or error details to the console. For output details, see the OUTPUTS and
 NOTES sections.
 
-The cmdlet is available through an applicable Windows update. The KB number for that update is
-pending confirmation.
+> [!NOTE]
+> `Invoke-KmsLicense` is available in [Windows Server vNext Preview Build 29651](https://techcommunity.microsoft.com/discussions/windowsserverinsiders/announcing-windows-server-vnext-preview-build-29651/4549702)
+> and the [2026-09 security update for Windows 11 (KB5124008)](https://support.microsoft.com/help/5124008).
 
 ## EXAMPLES
 
@@ -92,7 +93,7 @@ Clearing the server and port overrides doesn't clear a configured KMS lookup dom
 ### Example 2: Clear a KMS host listening-port override and inspect the result
 
 This example clears the configured listening-port override on a KMS host and reports whether the
-operation succeeded. Before you run the command, confirm that clearing the override won't disrupt
+operation succeeds. Before you run the command, confirm that clearing the override won't disrupt
 KMS client connectivity.
 
 ```powershell
@@ -105,8 +106,8 @@ if ($result.Success) {
 }
 ```
 
-On success, **Operation** is `ClearListeningPort`. On failure, **ErrorCode** contains the Windows
-HRESULT when the CIM exception provides one, and **ErrorMessage** contains the Windows error text
+On success, **Operation** is `ClearListeningPort`. On failure, **ErrorCode** contains a Windows
+HRESULT if the CIM exception provides one, and **ErrorMessage** contains the Windows error text
 or the exception message.
 
 ## PARAMETERS
@@ -114,7 +115,7 @@ or the exception message.
 ### -AsJob
 
 Runs the command as a background job when you invoke it through an implicit-remoting wrapper. This
-parameter is supplied by the wrapper and isn't declared by the local `OSLicense` module function.
+parameter comes from the wrapper, but the local `OSLicense` module function doesn't declare it.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -235,13 +236,13 @@ This cmdlet doesn't accept pipeline input.
 
 ### System.Management.Automation.PSCustomObject
 
-When you run the cmdlet synchronously, it returns a result object after it attempts a clearing
-operation. A successful result contains **Success** set to `true` and **Operation** set to
-`ClearServer`, `ClearPort`, `ClearDomain`, or `ClearListeningPort`.
+When you run the cmdlet synchronously, it attempts a clearing operation and returns a result
+object. In a successful result, **Success** is `$true`, and **Operation** is `ClearServer`, `ClearPort`,
+`ClearDomain`, or `ClearListeningPort`.
 
-If a CIM operation fails, the result contains **Success** set to `false`, **ErrorCode** set to the
-Windows HRESULT when available, and **ErrorMessage** set to the Windows error text or exception
-message. Failure results don't contain an **Operation** property.
+If a CIM operation fails, **Success** is `$false`, **ErrorCode** contains the Windows HRESULT when
+available, and **ErrorMessage** contains the Windows error text or exception message. Failure
+results don't contain an **Operation** property.
 
 ### System.Management.Automation.Job
 
@@ -255,14 +256,14 @@ cmdlet doesn't support **WhatIf** or **Confirm**, and it doesn't prompt before c
 Use `Get-KmsLicenseInfo` to review the current KMS configuration before you make a change.
 
 The clearing switches are mutually exclusive. If you invoke the underlying function without a
-clearing switch, it returns no object and makes no change. It also returns no object if the local
-`SoftwareLicensingService` CIM instance isn't available without raising a CIM error. Other CIM
-failures return the structured failure object described in OUTPUTS instead of writing to the error
-stream or throwing a terminating error to the caller.
+clearing switch, it returns no object and makes no change. The function also returns no object and
+doesn't raise a CIM error if the local **SoftwareLicensingService** CIM instance isn't available. For
+other CIM failures, the function returns the structured failure object that the OUTPUTS section
+describes instead of writing to the error stream or throwing a terminating error to the caller.
 
 The **AsJob** parameter is an implicit-remoting wrapper feature. The underlying local
-`Invoke-KmsLicense` function doesn't declare that parameter. Objects received from the remote job
-can be deserialized representations of the result objects.
+`Invoke-KmsLicense` function doesn't declare that parameter.
+The remote job can return deserialized representations of the result objects.
 
 ## RELATED LINKS
 

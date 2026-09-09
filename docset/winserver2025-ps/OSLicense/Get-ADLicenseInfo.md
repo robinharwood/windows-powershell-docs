@@ -4,7 +4,7 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/07/2026
+ms.date: 09/09/2026
 PlatyPS schema version: 2024-05-01
 title: Get-ADLicenseInfo
 ---
@@ -45,15 +45,19 @@ activation. Use **ActivationObjects** to enumerate activation objects in the Act
 configuration naming context.
 
 This cmdlet is read-only. It doesn't install a product key, activate Windows, or change activation
-objects. The applicable Windows update KB number for this cmdlet is pending confirmation.
+objects.
+
+> [!NOTE]
+> `Get-ADLicenseInfo` is available in [Windows Server vNext Preview Build 29651](https://techcommunity.microsoft.com/discussions/windowsserverinsiders/announcing-windows-server-vnext-preview-build-29651/4549702)
+> and the [2026-09 security update for Windows 11 (KB5124008)](https://support.microsoft.com/help/5124008).
 
 ## EXAMPLES
 
 ### Example 1: Generate a forest installation ID
 
-This example uses a fictitious product key to show how to generate the installation ID needed for
-offline forest activation. The returned object includes the supplied product key, so avoid writing
-the object to shared logs when you use an actual key.
+This example uses a fictitious product key to generate the installation ID for offline forest
+activation. The cmdlet returns an object that includes the supplied product key. Avoid writing the
+object to shared logs when you use an actual key.
 
 ```powershell
 $result = Get-ADLicenseInfo -ProductKey 'XXXXX-XXXXX-XXXXX-XXXXX-XXXXX'
@@ -79,8 +83,8 @@ $activationObjects | Select-Object Name, DistinguishedName, ObjectClass
 
 ### -ActivationObjects
 
-Enumerates the activation objects stored in the `CN=Activation Objects,CN=Microsoft SPP` container
-in the Active Directory configuration naming context.
+Enumerates the activation objects in the `CN=Activation Objects,CN=Microsoft SPP` container in the
+Active Directory configuration naming context.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -101,7 +105,7 @@ HelpMessage: ''
 
 ### -AsJob
 
-Runs the command as a background job when the module is accessed through an implicit-remoting
+Runs the command as a background job when you access the module through an implicit-remoting
 wrapper. This parameter returns a job object immediately. Use `Receive-Job` to retrieve the license
 information from the job.
 
@@ -124,9 +128,9 @@ HelpMessage: ''
 
 ### -ProductKey
 
-Specifies the product key for which the cmdlet generates an offline forest installation ID. The
-returned object contains both the product key and the generated installation ID. Protect the output
-as sensitive information when you specify an actual product key.
+Specifies the product key that the cmdlet uses to generate an offline forest installation ID. The
+cmdlet returns an object that contains both the product key and the installation ID. Treat
+the output as sensitive information when you specify an actual product key.
 
 ```yaml
 Type: System.String
@@ -171,20 +175,20 @@ If a top-level query fails, the cmdlet returns an object with **Success**, **Err
 ### System.Management.Automation.Job
 
 When you use **AsJob** through an implicit-remoting wrapper, the cmdlet returns a job object. The
-job's output contains the objects described in the preceding section.
+job's output contains the objects that the preceding section describes.
 
 ## NOTES
 
 The default and **ProductKey** operations query the local Software Licensing service. The
-**ActivationObjects** operation uses the `ActiveDirectory` module when it's available and otherwise
+**ActivationObjects** operation uses the `ActiveDirectory` module if it's available and otherwise
 uses Active Directory Service Interfaces (ADSI). The computer must be able to reach the domain, and
 your account must be able to read the activation-object container.
 
-The source function doesn't define **AsJob**. The parameter is added by the implicit-remoting
-wrapper and isn't available when you import the source function directly.
+The source function doesn't define **AsJob**. The implicit-remoting wrapper adds the parameter,
+which isn't available when you import the source function directly.
 
-The cmdlet can return `$null` when no applicable Windows licensing product is found or when
-activation objects can't be queried.
+The cmdlet returns `$null` when it finds no applicable Windows licensing product or can't query
+activation objects.
 
 ## RELATED LINKS
 

@@ -4,7 +4,7 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/07/2026
+ms.date: 09/09/2026
 PlatyPS schema version: 2024-05-01
 title: Invoke-OSLicense
 ---
@@ -94,25 +94,27 @@ operation. For example, **InstallProductKey** selects product-key installation, 
 **ReinstallSystemLicenses** selects system-license reinstallation. If you don't provide an operation
 parameter, the command returns no output and doesn't perform an operation.
 
-For online activation and product-key removal, you can provide **ActivationID** to target a specific
+For online activation and product-key removal, provide **ActivationID** to target a specific
 licensing product. If you omit **ActivationID**, the command selects the first primary Windows
 product that has a partial product key and isn't an add-on product. For rearm operations, omit
 **RearmID** to rearm Windows. Provide **RearmID** to target a licensing SKU by activation ID or an
 application by application ID.
 
-Offline activation requires **ConfirmationID**. You can also provide **ActivateOffline** with an
-activation ID or offline installation ID. If you provide only **ConfirmationID**, the command
+Offline activation requires **ConfirmationID**. To use an activation ID or offline installation ID,
+provide **ActivateOffline**. If you provide only **ConfirmationID**, the command
 selects the first primary Windows product that has a partial product key and an offline
-installation ID. Token activation requires **TokenCertThumbprint** and can include **TokenPIN**.
+installation ID. Token activation requires **TokenCertThumbprint**. **TokenPIN** is optional.
 Token-license removal requires both **ILID** and **ILvID**.
 
 Direct operations return structured objects instead of status text. Successful results contain
 **Success**, **Operation**, and operation-specific properties. Caught failures return **Success**
-set to `false`, **Operation**, **ErrorCode**, and **ErrorMessage**. When available, **ErrorCode**
+as `$false`, **Operation**, **ErrorCode**, and **ErrorMessage**. When available, **ErrorCode**
 contains the Windows HRESULT reported by the CIM operation. An online or offline activation
 failure after product resolution also includes **ActivationID** and **ProductName**.
 
-The applicable Windows update KB number is pending confirmation.
+> [!NOTE]
+> `Invoke-OSLicense` is available in [Windows Server vNext Preview Build 29651](https://techcommunity.microsoft.com/discussions/windowsserverinsiders/announcing-windows-server-vnext-preview-build-29651/4549702)
+> and the [2026-09 security update for Windows 11 (KB5124008)](https://support.microsoft.com/help/5124008).
 
 ## EXAMPLES
 
@@ -127,8 +129,8 @@ $result = Invoke-OSLicense -InstallProductKey 'AAAAA-BBBBB-CCCCC-DDDDD-EEEEE'
 $result | Select-Object Success, Operation, ErrorCode, ErrorMessage
 ```
 
-This example shows how to select the product-key installation operation and inspect the common
-result properties. The command doesn't claim that the fictitious key is valid or that activation
+The first command requests product-key installation. The second command displays the common result
+properties. The example doesn't indicate that the fictitious key is valid or that activation
 succeeds.
 
 ### Example 2: Activate a specific product online and inspect the result
@@ -147,9 +149,9 @@ $result |
   Select-Object Success, Operation, ActivationID, ProductName, ErrorCode, ErrorMessage
 ```
 
-This example shows how to select online activation, target a product explicitly, and inspect both
-success and error properties. It doesn't claim that the fictitious activation ID resolves or that
-the operation succeeds.
+The first command requests online activation for a specific product. The second command displays
+the success and error properties. The example doesn't indicate that the fictitious activation ID
+resolves or that the operation succeeds.
 
 ## PARAMETERS
 
@@ -389,7 +391,7 @@ HelpMessage: ''
 ### -Rearm
 
 Selects a rearm operation. If you omit **RearmID**, the command rearms Windows. Use **RearmID** to
-target a licensing SKU or application. The success result sets **RestartRequired** to `true`.
+target a licensing SKU or application. A successful operation sets **RestartRequired** to `$true`.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -434,8 +436,8 @@ HelpMessage: ''
 ### -ReinstallSystemLicenses
 
 Selects the operation that reinstalls `.xrm-ms` files from the Windows system licensing-token and
-OEM directories. The command continues after an individual file fails and reports installed and
-failed file counts and paths in the result object.
+OEM directories. The command continues after a file fails and reports counts and paths for
+installed and failed files in the result object.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -534,12 +536,12 @@ You can't pipe objects to this cmdlet.
 ### System.Management.Automation.PSCustomObject
 
 A direct operation returns a structured result object. Every operation result includes **Success**
-and **Operation**. Successful operations can also include these properties:
+and **Operation**. Successful results include additional properties that depend on the operation:
 
 - Product-key installation: **ProductKey**.
 - License-file installation: **LicenseFile**.
 - System-license reinstallation: **LicensesInstalled**, **LicensesFailed**, **InstalledFiles**, and
-  **FailedFiles**. **Success** is `true` only when no individual license file fails.
+  **FailedFiles**. **Success** is `$true` only when no individual license file fails.
 - Rearm: **Target** and **RestartRequired**.
 - Product-key removal: **ActivationID**.
 - Online activation: **ActivationID** and **ProductName**.
@@ -547,10 +549,11 @@ and **Operation**. Successful operations can also include these properties:
 - Token activation: **CertificateThumbprint**.
 - Token-license removal: **ILID** and **ILvID**.
 
-A caught failure returns **Success** set to `false`, **Operation**, **ErrorCode**, and
-**ErrorMessage**. **ErrorCode** is a hexadecimal Windows HRESULT when the CIM exception provides
-one; otherwise, its value is `null`. If an online or offline activation operation resolved a
-product before the failure, the object also includes **ActivationID** and **ProductName**.
+When the cmdlet catches a failure, it returns a result where **Success** is `$false`. The result
+also includes **Operation**, **ErrorCode**, and **ErrorMessage**. **ErrorCode** is a hexadecimal
+Windows HRESULT when the CIM exception provides one; otherwise, its value is `$null`. If an online
+or offline activation operation resolved a product before the failure, the object also includes
+**ActivationID** and **ProductName**.
 
 The command returns no object when you don't select an operation or when you provide an incomplete
 token-license removal combination that doesn't reach the operation.
@@ -566,15 +569,15 @@ Run this cmdlet from an elevated PowerShell session. Its operations can change t
 activation state, installed license files, token licenses, or rearm state of the local computer.
 Confirm the target and back up any required licensing information before you run an operation.
 
-The operation parameters aren't declared mandatory in the target function. Therefore, PowerShell
-can bind a parameter set even when the selector needed to perform that operation is absent. In
+The target function doesn't declare the operation parameters as mandatory. Therefore, PowerShell
+might bind a parameter set even when you omit the selector that the operation needs. In
 particular, token activation requires **TokenCertThumbprint**, token-license removal requires both
 **ILID** and **ILvID**, and offline activation requires **ConfirmationID**.
 
 After product-key installation, product-key removal, and activation operations, the command requests
 a best-effort licensing-status refresh. A refresh failure doesn't replace the result of the primary
 operation. System-license reinstallation continues across individual file failures and reports the
-aggregate result. A successful rearm result indicates that a restart is required.
+aggregate result. A successful rearm result indicates that you must restart the computer.
 
 The direct function catches operation errors and returns them as structured objects. Inspect
 **Success**, **ErrorCode**, and **ErrorMessage** instead of relying on console output. Protect
