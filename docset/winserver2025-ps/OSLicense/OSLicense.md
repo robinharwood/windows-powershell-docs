@@ -1,11 +1,12 @@
 ---
 document type: module
+Download Help Link: https://aka.ms/winsvr-2025-pshelp
 Help Version: 1.0.0.0
 HelpInfoUri:
 Locale: en-US
 Module Guid: b3e5a5c8-7d2f-4e1a-9c3b-8f6d4a2e1b0c
 Module Name: OSLicense
-ms.date: 09/09/2026
+ms.date: 09/10/2026
 PlatyPS schema version: 2024-05-01
 title: OSLicense Module
 ---

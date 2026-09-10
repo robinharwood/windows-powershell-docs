@@ -4,7 +4,8 @@ external help file: OSLicense-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: OSLicense
-ms.date: 09/09/2026
+ms.date: 09/10/2026
+online version: https://learn.microsoft.com/powershell/module/oslicense/invoke-adlicense?view=windowsserver2025-ps&wt.mc_id=ps-gethelp
 PlatyPS schema version: 2024-05-01
 title: Invoke-ADLicense
 ---
